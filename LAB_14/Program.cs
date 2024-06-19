@@ -50,7 +50,7 @@ namespace lab14
             Console.WriteLine("5. Использовать union. Показать только внедорожники и грузовики");
             Console.WriteLine("6. Использовать sum. Показать суммарное количество сидений у легковых автомобилей, не считая внедорожников");
             Console.WriteLine("7. Использовать group by. Показать группировку по бренду");
-            Console.WriteLine("8. Использовать let. Создать новый тип: бренд и новая цена со скидкой");
+            Console.WriteLine("8. Использовать join. Соеденить два класса в один");
             Console.WriteLine("9. Завершение работы");
         }
 
@@ -60,7 +60,7 @@ namespace lab14
             Console.WriteLine("2. Создать коллекцию типа MyCollection<Car> из заданного количества элементов");
             Console.WriteLine("3. Распечатать коллекцию");
             Console.WriteLine("4. Использовать where. Показать все внедорожники с наличием полного привода");
-            Console.WriteLine("5. Использовать union. Показать только внедорожники и грузовики");
+            Console.WriteLine("5. Использовать count. Показать количество грузовиков");
             Console.WriteLine("6. Использовать sum. Показать суммарное количество сидений у легковых автомобилей, не считая внедорожников");
             Console.WriteLine("7. Использовать group by. Показать группировку по бренду");
             Console.WriteLine("8. Завершение работы");
@@ -118,10 +118,12 @@ namespace lab14
                                         {
                                             Console.Clear();
                                             Console.WriteLine("Запрос через LINQ-запросы\n");
-                                            Requests.RequestWhereLINQ(factory);
+                                            IEnumerable<Car> req1 = Requests.RequestWhereLINQ(factory);
+                                            Requests.PrintRequestWhere(req1);
                                             Console.WriteLine();
                                             Console.WriteLine("Запрос через методы расширения\n");
-                                            Requests.RequestWhereEx(factory);
+                                            IEnumerable<Car> req2 = Requests.RequestWhereLINQ(factory);
+                                            Requests.PrintRequestWhere(req2);
                                             TrashAnswer();
                                             break;
                                         }
@@ -129,10 +131,12 @@ namespace lab14
                                         {
                                             Console.Clear();
                                             Console.WriteLine("Запрос через LINQ-запросы\n");
-                                            Requests.RequestUnionLINQ(factory);
+                                            IEnumerable<Car> req1 = Requests.RequestUnionLINQ(factory);
+                                            Requests.PrintRequestUnion(req1);
                                             Console.WriteLine();
                                             Console.WriteLine("Запрос через методы расширения\n");
-                                            Requests.RequestUnionEx(factory);
+                                            IEnumerable<Car> req2 = Requests.RequestUnionEx(factory);
+                                            Requests.PrintRequestUnion(req2);
                                             TrashAnswer();
                                             break;
                                         }
@@ -140,10 +144,12 @@ namespace lab14
                                         {
                                             Console.Clear();
                                             Console.WriteLine("Запрос через LINQ-запросы\n");
-                                            Requests.RequestSumLINQ(factory);
+                                            int req1 = Requests.RequestSumLINQ(factory);
+                                            Requests.PrintRequestSum(req1);
                                             Console.WriteLine();
                                             Console.WriteLine("Запрос через методы расширения\n");
-                                            Requests.RequestSumEx(factory);
+                                            int req2 = Requests.RequestSumEx(factory);
+                                            Requests.PrintRequestSum(req2);
                                             TrashAnswer();
                                             break;
                                         }
@@ -151,10 +157,12 @@ namespace lab14
                                         {
                                             Console.Clear();
                                             Console.WriteLine("Запрос через LINQ-запросы\n");
-                                            Requests.RequestGroupLINQ(factory);
+                                            IEnumerable<IGrouping<string, Car>>  req1 = Requests.RequestGroupLINQ(factory);
+                                            Requests.PrintRequestGroup(req1);
                                             Console.WriteLine();
                                             Console.WriteLine("Запрос через методы расширения\n");
-                                            Requests.RequestGroupEx(factory);
+                                            IEnumerable<IGrouping<string, Car>> req2 = Requests.RequestGroupEx(factory);
+                                            Requests.PrintRequestGroup(req2);
                                             TrashAnswer();
                                             break;
                                         }
@@ -162,10 +170,12 @@ namespace lab14
                                         {
                                             Console.Clear();
                                             Console.WriteLine("Запрос через LINQ-запросы\n");
-                                            Requests.RequestLetLINQ(factory);
+                                            IEnumerable<dynamic> req1 = Requests.RequestJoinLINQ(factory);
+                                            Requests.PrintRequestJoin(req1);
                                             Console.WriteLine();
                                             Console.WriteLine("Запрос через методы расширения\n");
-                                            Requests.RequestLetEx(factory);
+                                            IEnumerable<dynamic> req2 = Requests.RequestJoinEx(factory);
+                                            Requests.PrintRequestJoin(req2);
                                             TrashAnswer();
                                             break;
                                         }
@@ -215,10 +225,12 @@ namespace lab14
                                         {
                                             Console.Clear();
                                             Console.WriteLine("Запрос через LINQ-запросы\n");
-                                            Requests.RequestWhereLINQTwo(cars);
+                                            IEnumerable<Car> req1 = Requests.RequestWhereLINQTwo(cars);
+                                            Requests.PrintRequestWhereTwo(req1);
                                             Console.WriteLine();
                                             Console.WriteLine("Запрос через методы расширения\n");
-                                            Requests.RequestWhereExTwo(cars);
+                                            IEnumerable<Car> req2 = Requests.RequestWhereExTwo(cars);
+                                            Requests.PrintRequestWhereTwo(req2);
                                             TrashAnswer();
                                             break;
                                         }
@@ -226,10 +238,12 @@ namespace lab14
                                         {
                                             Console.Clear();
                                             Console.WriteLine("Запрос через LINQ-запросы\n");
-                                            Requests.RequestUnionLINQTwo(cars);
+                                            int req1 = Requests.RequestCountLINQTwo(cars);
+                                            Requests.PrintRequestCountTwo(req1);
                                             Console.WriteLine();
                                             Console.WriteLine("Запрос через методы расширения\n");
-                                            Requests.RequestUnionExTwo(cars);
+                                            int req2 = Requests.RequestCountExTwo(cars);
+                                            Requests.PrintRequestCountTwo(req2);
                                             TrashAnswer();
                                             break;
                                         }
@@ -237,10 +251,12 @@ namespace lab14
                                         {
                                             Console.Clear();
                                             Console.WriteLine("Запрос через LINQ-запросы\n");
-                                            Requests.RequestSumLINQTwo(cars);
+                                            int req1 = Requests.RequestSumLINQTwo(cars);
+                                            Requests.PrintRequestSumTwo(req1);
                                             Console.WriteLine();
                                             Console.WriteLine("Запрос через методы расширения\n");
-                                            Requests.RequestSumExTwo(cars);
+                                            int req2 = Requests.RequestSumExTwo(cars);
+                                            Requests.PrintRequestSumTwo(req2);
                                             TrashAnswer();
                                             break;
                                         }
@@ -248,10 +264,12 @@ namespace lab14
                                         {
                                             Console.Clear();
                                             Console.WriteLine("Запрос через LINQ-запросы\n");
-                                            Requests.RequestGroupLINQTwo(cars);
+                                            IEnumerable<IGrouping<string, Car>> req1 = Requests.RequestGroupLINQTwo(cars);
+                                            Requests.PrintRequestGroupTwo(req1);
                                             Console.WriteLine();
                                             Console.WriteLine("Запрос через методы расширения\n");
-                                            Requests.RequestGroupExTwo(cars);
+                                            IEnumerable<IGrouping<string, Car>> req2 = Requests.RequestGroupExTwo(cars);
+                                            Requests.PrintRequestGroupTwo(req2);
                                             TrashAnswer();
                                             break;
                                         }

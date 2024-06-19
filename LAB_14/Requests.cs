@@ -101,11 +101,11 @@ public class Requests
         }
     }
 
-    public static void RequestWhereLINQ(Queue<List<Car>> factory)
+    public static IEnumerable<Car> RequestWhereLINQ(Queue<List<Car>> factory)
     {
         if (factory.Count == 0)
         {
-            Console.WriteLine("Коллекция пустая");
+            return null;
         }
         else
         {
@@ -113,26 +113,26 @@ public class Requests
                       from car in ceh
                       where car is OffRoadCar && ((OffRoadCar)car).Awd == true
                       select car;
-            PrintRequestWhere(res);
+            return res;
         }
     }
 
-    public static void RequestWhereEx(Queue<List<Car>> factory)
+    public static IEnumerable<Car> RequestWhereEx(Queue<List<Car>> factory)
     {
         if (factory.Count == 0)
         {
-            Console.WriteLine("Коллекция пустая");
+            return null;
         }
         else
         {
             var res = factory.SelectMany(ceh => ceh).Where(car => car is OffRoadCar && ((OffRoadCar)car).Awd == true);
-            PrintRequestWhere(res);
+            return res;
         }
     }
 
     public static void PrintRequestWhere(IEnumerable<Car> res)
     {
-        if (res.Count() == 0)
+        if (res is null || res.Count() == 0)
         {
             Console.WriteLine("В коллекции нет таких внедорожников");
         }
@@ -149,11 +149,11 @@ public class Requests
         }
     }
 
-    public static void RequestUnionLINQ(Queue<List<Car>> factory)
+    public static IEnumerable<Car> RequestUnionLINQ(Queue<List<Car>> factory)
     {
         if (factory.Count == 0)
         {
-            Console.WriteLine("Коллекция пустая");
+            return null;
         }
         else
         {
@@ -165,27 +165,27 @@ public class Requests
                        from car in ceh
                        where car is LorryCar
                        select car;
-            PrintRequestUnion(res1.Union(res2));
+            return res1.Union(res2);
         }
     }
 
-    public static void RequestUnionEx(Queue<List<Car>> factory)
+    public static IEnumerable<Car> RequestUnionEx(Queue<List<Car>> factory)
     {
         if (factory.Count == 0)
         {
-            Console.WriteLine("Коллекция пустая");
+            return null;
         }
         else
         {
             var res1 = factory.SelectMany(ceh => ceh).Where(car => car is OffRoadCar);
             var res2 = factory.SelectMany(ceh => ceh).Where(car => car is LorryCar);
-            PrintRequestUnion(res1.Union(res2));
+            return res1.Union(res2);
         }
     }
 
     public static void PrintRequestUnion(IEnumerable<Car> res)
     {
-        if (res.Count() == 0)
+        if (res is null || res.Count() == 0)
         {
             Console.WriteLine("В коллекции нет таких машин");
         }
@@ -202,11 +202,11 @@ public class Requests
         }
     }
 
-    public static void RequestSumLINQ(Queue<List<Car>> factory)
+    public static int RequestSumLINQ(Queue<List<Car>> factory)
     {
         if (factory.Count == 0)
         {
-            Console.WriteLine("Коллекция пустая");
+            return 0;
         }
         else
         {
@@ -214,20 +214,20 @@ public class Requests
                        from car in ceh
                        where (car is not OffRoadCar) && (car is PassengerCar)
                        select ((PassengerCar)car).CountSeats).Sum();
-            PrintRequestSum(res);
+            return res;
         }
     }
 
-    public static void RequestSumEx(Queue<List<Car>> factory)
+    public static int RequestSumEx(Queue<List<Car>> factory)
     {
         if (factory.Count == 0)
         {
-            Console.WriteLine("Коллекция пустая");
+            return 0;
         }
         else
         {
             var res = factory.SelectMany(ceh => ceh).Where(car => ((car is not OffRoadCar) && (car is PassengerCar))).Select(car => ((PassengerCar)car).CountSeats).Sum();
-            PrintRequestSum(res);
+            return res;
         }
     }
 
@@ -243,44 +243,46 @@ public class Requests
         }
     }
 
-    public static void RequestGroupLINQ(Queue<List<Car>> factory)
+    public static IEnumerable<IGrouping<string, Car>> RequestGroupLINQ(Queue<List<Car>> factory)
     {
         if (factory.Count == 0)
         {
-            Console.WriteLine("Коллекция пустая");
+            return null;
         }
         else
         {
             var res = from ceh in factory
                       from car in ceh
                       group car by car.Brend;
-            PrintRequestGroup(res);
+            return res;
         }
     }
 
-    public static void RequestGroupEx(Queue<List<Car>> factory)
+    public static IEnumerable<IGrouping<string, Car>> RequestGroupEx(Queue<List<Car>> factory)
     {
         if (factory.Count == 0)
         {
-            Console.WriteLine("Коллекция пустая");
+            return null;
         }
         else
         {
             var res = factory.SelectMany(ceh => ceh).GroupBy(car => car.Brend);
-            PrintRequestGroup(res);
+            return res;
         }
     }
 
     public static void PrintRequestGroup(IEnumerable<IGrouping<string, Car>> res)
     {
-        if (res.Count() == 0)
+        if (res is null || res.Count() == 0)
         {
-            Console.WriteLine("В коллекции нет таких машин");
+            Console.WriteLine("В коллекции нет машин для группировки");
         }
         else
         {
             foreach (var item in res)
             {
+                Console.WriteLine($"\n\nБренд группы: {item.Key}");
+                Console.WriteLine($"Количество машин в группе: {item.Count()}");
                 foreach (var car in item)
                 {
                     Console.WriteLine(line);
@@ -291,88 +293,125 @@ public class Requests
         }
     }
 
-    public static void RequestLetLINQ(Queue<List<Car>> factory)
+    public static IEnumerable<dynamic> RequestJoinLINQ(Queue<List<Car>> factory)
     {
         if (factory.Count == 0)
         {
-            Console.WriteLine("Коллекция пустая");
+            return null;
         }
-        else
-        {
-            var res = from ceh in factory
-                      from car in ceh
-                      let newCost = (int)(car.Cost * 0.9)
-                      select new { Brend = car.Brend, NewCost = newCost };
-            PrintRequestLet(res);
-        }
+        List<Company> companies = new List<Company>();
+        Company company1 = new Company("Ford", 1920, "США", "Детройт");
+        Company company2 = new Company("Volvo", 1927, "Швеция", "Гетеборг");
+        Company company3 = new Company("Honda", 1948, "Япония", "Хамамацу");
+        Company company4 = new Company("Volkswagen", 1938, "Германия", "Вольфсбург");
+        Company company5 = new Company("Nissan", 1934, "Япония", "Йокогама");
+        Company company6 = new Company("BMW", 1922, "Германия", "Мюнхен");
+        Company company7 = new Company("Lada", 1966, "Россия", "Тольятти");
+        Company company8 = new Company("KAMAZ", 1969, "Россия", "Набережные Челны");
+        companies.Add(company1);
+        companies.Add(company2);
+        companies.Add(company3);
+        companies.Add(company4);
+        companies.Add(company5);
+        companies.Add(company6);
+        companies.Add(company7);
+        companies.Add(company8);
+        var res = from ceh in factory
+                  from car in ceh
+                  where car is Car
+                  join t in companies on ((Car)car).Brend equals t.Brend
+                  select new
+                  {
+                      Brend = car.Brend,
+                      AddressCompanyCountry = t.Country,
+                      AddressCompanyCity = t.City
+                  };
+        return res;
     }
 
-    public static void RequestLetEx(Queue<List<Car>> factory)
+    public static IEnumerable<dynamic> RequestJoinEx(Queue<List<Car>> factory)
     {
         if (factory.Count == 0)
         {
-            Console.WriteLine("Коллекция пустая");
+            return null;
         }
-        else
-        {
-            var res = factory.SelectMany(ceh => ceh).
-                Select(car =>
-                {
-                    int newCost = (int)(car.Cost * 0.9);
-                    return new { Brend = car.Brend, NewCost = newCost };
-                });
-            PrintRequestLet(res);
-        }
+        List<Company> companies = new List<Company>();
+        Company company1 = new Company("Ford", 1920, "США", "Детройт");
+        Company company2 = new Company("Volvo", 1927, "Швеция", "Гетеборг");
+        Company company3 = new Company("Honda", 1948, "Япония", "Хамамацу");
+        Company company4 = new Company("Volkswagen", 1938, "Германия", "Вольфсбург");
+        Company company5 = new Company("Nissan", 1934, "Япония", "Йокогама");
+        Company company6 = new Company("BMW", 1922, "Германия", "Мюнхен");
+        Company company7 = new Company("Lada", 1966, "Россия", "Тольятти");
+        Company company8 = new Company("KAMAZ", 1969, "Россия", "Набережные Челны");
+        companies.Add(company1);
+        companies.Add(company2);
+        companies.Add(company3);
+        companies.Add(company4);
+        companies.Add(company5);
+        companies.Add(company6);
+        companies.Add(company7);
+        companies.Add(company8);
+        var res = factory.SelectMany(ceh => ceh).Join(companies, company => company.Brend, car => car.Brend,
+            (car, company) => new
+            {
+                Brend = car.Brend,
+                AddressCompanyCountry = company.Country,
+                AddressCompanyCity = company.City
+            });
+        return res;
     }
 
-    public static void PrintRequestLet(IEnumerable<dynamic> res)
+    public static void PrintRequestJoin(IEnumerable<dynamic> res)
     {
-        if (res.Count() == 0)
+        if (res is null || res.Count() == 0)
         {
-            Console.WriteLine("В коллекции нет таких машин");
+            Console.WriteLine("В коллекции нет машин для объединения");
         }
         else
         {
             foreach (var item in res)
             {
                 Console.WriteLine(line);
-                Console.WriteLine($"Бренд: {item.Brend}, новая цена: {item.NewCost}");
+                Console.WriteLine(item.ToString());
                 Console.WriteLine(line);
             }
         }
     }
 
-    public static void RequestWhereLINQTwo(MyCollection<Car> collection)
+
+
+    public static IEnumerable<Car> RequestWhereLINQTwo(MyCollection<Car> collection)
     {
         if (collection.Count == 0)
         {
-            Console.WriteLine("Коллекция пустая");
+            return null;
         }
         else
         {
             var res = from car in collection
                       where car is OffRoadCar && ((OffRoadCar)car).Awd == true
                       select car;
-            PrintRequestWhereTwo(res);
+            return res;
         }
     }
 
-    public static void RequestWhereExTwo(MyCollection<Car> collection)
+    public static IEnumerable<Car> RequestWhereExTwo(MyCollection<Car> collection)
     {
         if (collection.Count == 0)
         {
-            Console.WriteLine("Коллекция пустая");
+            return null;
         }
         else
         {
             var res = collection.Where(car => car is OffRoadCar && ((OffRoadCar)car).Awd == true);
-            PrintRequestWhereTwo(res);
+            return res;
         }
     }
 
     public static void PrintRequestWhereTwo(IEnumerable<Car> res)
     {
-        if (res.Count() == 0)
+        if (res is null || res.Count() == 0)
         {
             Console.WriteLine("В коллекции нет таких внедорожников");
         }
@@ -389,82 +428,71 @@ public class Requests
         }
     }
 
-    public static void RequestUnionLINQTwo(MyCollection<Car> collection)
+    public static int RequestCountLINQTwo(MyCollection<Car> collection)
     {
         if (collection.Count == 0)
         {
-            Console.WriteLine("Коллекция пустая");
+            return 0;
         }
         else
         {
-            var res1 = from car in collection
-                       where car is OffRoadCar
-                       select car;
-            var res2 = from car in collection
+            var res = (from car in collection
                        where car is LorryCar
-                       select car;
-            PrintRequestUnionTwo(res1.Union(res2));
+                       select car).Count();
+            return res;
         }
     }
 
-    public static void RequestUnionExTwo(MyCollection<Car> collection)
+    public static int RequestCountExTwo(MyCollection<Car> collection)
     {
         if (collection.Count == 0)
         {
-            Console.WriteLine("Коллекция пустая");
+            return 0;
         }
         else
         {
-            var res1 = collection.Where(car => car is OffRoadCar);
-            var res2 = collection.Where(car => car is LorryCar);
-            PrintRequestUnionTwo(res1.Union(res2));
+            var res = collection.Where(car => car is LorryCar).Count();
+            return res;
         }
     }
 
-    public static void PrintRequestUnionTwo(IEnumerable<Car> res)
+    public static void PrintRequestCountTwo(int res)
     {
-        if (res.Count() == 0)
+        if (res  == 0)
         {
             Console.WriteLine("В коллекции нет таких машин");
         }
         else
         {
-            Console.WriteLine("Внедорожники и грузовики: ");
-            foreach (var item in res)
-            {
-                Console.WriteLine(line);
-                Console.WriteLine(item.ToString());
-                Console.WriteLine(line);
-            }
-            Console.WriteLine();
+            Console.WriteLine($"Количество грузовиков: {res}");
         }
     }
 
-    public static void RequestSumLINQTwo(MyCollection<Car> collection)
+    public static int RequestSumLINQTwo(MyCollection<Car> collection)
     {
         if (collection.Count == 0)
         {
-            Console.WriteLine("Коллекция пустая");
+            return 0;
         }
         else
         {
             var res = (from car in collection
                        where (car is not OffRoadCar) && (car is PassengerCar)
                        select ((PassengerCar)car).CountSeats).Sum();
-            PrintRequestSumTwo(res);
+            return res;
         }
     }
 
-    public static void RequestSumExTwo(MyCollection<Car> collection)
+    public static int RequestSumExTwo(MyCollection<Car> collection)
     {
         if (collection.Count == 0)
         {
-            Console.WriteLine("Коллекция пустая");
+            return 0;
         }
         else
         {
             var res = collection.Where(car => ((car is not OffRoadCar) && (car is PassengerCar))).Select(car => ((PassengerCar)car).CountSeats).Sum();
-            PrintRequestSumTwo(res);
+            return res;
         }
     }
 
@@ -480,44 +508,46 @@ public class Requests
         }
     }
 
-    public static void RequestGroupLINQTwo(MyCollection<Car> collection)
+    public static IEnumerable<IGrouping<string, Car>> RequestGroupLINQTwo(MyCollection<Car> collection)
     {
         if (collection.Count == 0)
         {
-            Console.WriteLine("Коллекция пустая");
+            return null;
         }
         else
         {
             var res = from car in collection
                       where car is not null
                       group car by car.Brend;
-            PrintRequestGroupTwo(res);
+            return res;
         }
     }
 
-    public static void RequestGroupExTwo(MyCollection<Car> collection)
+    public static IEnumerable<IGrouping<string, Car>> RequestGroupExTwo(MyCollection<Car> collection)
     {
         if (collection.Count == 0)
         {
-            Console.WriteLine("Коллекция пустая");
+            return null;
         }
         else
         {
             var res = collection.Where(car => car is not null).GroupBy(car => car.Brend);
-            PrintRequestGroupTwo(res);
+            return res;
         }
     }
 
     public static void PrintRequestGroupTwo(IEnumerable<IGrouping<string, Car>> res)
     {
-        if (res.Count() == 0)
+        if (res is null || res.Count() == 0)
         {
-            Console.WriteLine("В коллекции нет таких машин");
+            Console.WriteLine("В коллекции нет машин дял группировки");
         }
         else
         {
             foreach (var item in res)
             {
+                Console.WriteLine($"\n\nБренд группы: {item.Key}");
+                Console.WriteLine($"Количество машин в группе: {item.Count()}");
                 foreach (var car in item)
                 {
                     Console.WriteLine(line);
